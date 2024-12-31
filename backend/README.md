@@ -1,4 +1,4 @@
-# User Registration Endpoint
+# Uber User Registration Endpoint
 
 ## Endpoint
 `POST /user/register`
