@@ -21,13 +21,14 @@ const UserProtectedWrapper = ({
               }
         }).then((response)=>{
             if(response.status==200){
-                setUser(response.data.user)
+                // console.log(response)
+                setUser(response.data)
                 setIsLoading(false)
             }
         }).catch((err)=>{
             console.log(err)
             localStorage.removeItem('token')
-            navigate('/user-login')
+            navigate('/login')
         })
 
     }, [token]);

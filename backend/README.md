@@ -455,3 +455,147 @@ This endpoint is used to log out the authenticated captain.
       "message": "Unauthorized"
     }
     ```
+
+# Uber Ride Creation Endpoint
+
+## Endpoint
+`POST /ride/create`
+
+## Description
+This endpoint is used to create a new ride. It requires the user's pickup location, destination, and vehicle type.
+
+## Request Body
+The request body should be a JSON object containing the following fields:
+- `pickup` (string, required): The pickup location of the ride. Must be at least 3 characters long.
+- `destination` (string, required): The destination location of the ride. Must be at least 3 characters long.
+- `vehicleType` (string, required): The type of the vehicle. Must be one of 'auto', 'car', or 'moto'.
+
+Example:
+```json
+{
+  "pickup": "123 Main St",
+  "destination": "456 Elm St",
+  "vehicleType": "car"
+}
+```
+
+## Responses
+
+### Success
+- **Status Code**: `200 OK`
+- **Response Body**:
+  ```json
+  {
+    "ride": {
+      "_id": "ride_id",
+      "user": "user_id",
+      "pickup": "123 Main St",
+      "destination": "456 Elm St",
+      "otp": "123456",
+      "fare": 100
+    }
+  }
+  ```
+
+### Error
+- **Status Code**: `400 Bad Request`
+  - **Response Body**:
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "Invalid Pickup Address",
+          "param": "pickup",
+          "location": "body"
+        },
+        {
+          "msg": "Invalid Destination Address",
+          "param": "destination",
+          "location": "body"
+        },
+        {
+          "msg": "Invalid Vehicle Type",
+          "param": "vehicleType",
+          "location": "body"
+        }
+      ]
+    }
+    ```
+- **Status Code**: `401 Unauthorized`
+  - **Response Body**:
+    ```json
+    {
+      "message": "Unauthorized"
+    }
+    ```
+- **Status Code**: `500 Internal Server Error`
+  - **Response Body**:
+    ```json
+    {
+      "message": "Unable to create ride"
+    }
+    ```
+
+# Uber Ride Fare Calculation Endpoint
+
+## Endpoint
+`GET /ride/get-fare`
+
+## Description
+This endpoint is used to calculate the fare for a ride based on the pickup and destination locations.
+
+## Request Query Parameters
+- `pickup` (string, required): The pickup location of the ride. Must be at least 3 characters long.
+- `destination` (string, required): The destination location of the ride. Must be at least 3 characters long.
+
+Example:
+```
+GET /ride/get-fare?pickup=123+Main+St&destination=456+Elm+St
+```
+
+## Responses
+
+### Success
+- **Status Code**: `200 OK`
+- **Response Body**:
+  ```json
+  {
+    "auto": 50,
+    "car": 100,
+    "moto": 40
+  }
+  ```
+
+### Error
+- **Status Code**: `400 Bad Request`
+  - **Response Body**:
+    ```json
+    {
+      "errors": [
+        {
+          "msg": "Invalid Pickup Address",
+          "param": "pickup",
+          "location": "query"
+        },
+        {
+          "msg": "Invalid Destination Address",
+          "param": "destination",
+          "location": "query"
+        }
+      ]
+    }
+    ```
+- **Status Code**: `401 Unauthorized`
+  - **Response Body**:
+    ```json
+    {
+      "message": "Unauthorized"
+    }
+    ```
+- **Status Code**: `500 Internal Server Error`
+  - **Response Body**:
+    ```json
+    {
+      "message": "Unable to get fare"
+    }
+    ```
