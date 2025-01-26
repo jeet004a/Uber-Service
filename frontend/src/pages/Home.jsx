@@ -11,6 +11,8 @@ import axios from 'axios'
 import throttle from 'lodash/throttle';
 import { UserDataContext } from '../context/UserContext';
 import { SocketContext } from '../context/SocketContext';
+import {useNavigate} from 'react-router-dom'
+import LiveTracking from '../components/LiveTracking';
 
 const Home = () => {
   const [pickup, setPickup] = useState('');
@@ -26,6 +28,9 @@ const Home = () => {
   const [activeField, setActiveField] = useState('')
   const [fare, setFare] = useState({})
   const [vehicleType, setVehicleType] = useState('')
+  const [ride, setRide] = useState(null)
+
+  const navigate=useNavigate()
 
   const panelRef=useRef(null)
   const panelCloseRef=useRef(null)
@@ -54,6 +59,21 @@ const Home = () => {
   //  console.log(user) 
   socket.emit("join",{userType: 'user', userId: user._id})
   })
+
+  socket.on('ride-confirmed', ride=>{
+    // console.log(ride)
+    setRide(ride)
+    setVehicleFound(false)
+    setWaitingForDriver(true)
+
+  })
+
+  socket.on('ride-started',ride=>{
+    setWaitingForDriver(false)
+    navigate('/riding',{state: {ride}})
+  })
+
+
 
 
   useGSAP(function(){
@@ -143,13 +163,6 @@ const Home = () => {
   }
 
 
-
-
-  
-
-
-
-
   const handleDestinationChange=async(e)=>{
     setDestination(e.target.value)
     try {
@@ -204,11 +217,12 @@ const Home = () => {
     <div className='h-screen relative overflow-hidden'>
       <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
       {/* hello */}
-      <div className='h-screen w-screen'>
-        <img className='h-full w-full object-cover' src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif" alt="" />
+      <div className='h-3/5'>
+        {/* <img className='h-full w-full object-cover' src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif" alt="" /> */}
+        <LiveTracking/>
       </div>
-      <div className='h-screen absolute top-0 w-full flex flex-col justify-end'>
-        <div className='h-[32%] p-6 bg-white relative'>
+      <div className='flex flex-col justify-end h-screen absolute top-0 w-full'>
+        <div className='h-[38%] p-6 bg-white relative'>
           <h5 ref={panelCloseRef} onClick={()=>{
             setPanelOpen(false)
           }} className='absolute top-3 right-8 text-xl opacity-0'>
@@ -219,7 +233,7 @@ const Home = () => {
         <form onChange={(e)=>{
           submitHandler(e)
         }}>
-          <div className='line absolute h-16 w-1 top-[45%] left-10 bg-gray-700 rounded-full'></div>
+          <div className='line absolute h-14 w-1 top-[35%] left-10 bg-gray-700 rounded-full'></div>
           <input 
           onClick={()=>{
             setPanelOpen(true)
@@ -292,7 +306,10 @@ const Home = () => {
       </div>
 
       <div ref={waitingForDriverRef}  className='fixed w-full z-10 bg-white bottom-0 px-3 py-6 pt-12 '>
-        <WaitingForDriver setWaitingForDriver={setWaitingForDriver}/>
+        <WaitingForDriver ride={ride}
+                    setVehicleFound={setVehicleFound}
+                     setWaitingForDriver={setWaitingForDriver}
+                     waitingForDriver={waitingForDriver}/>
       </div>
     </div>
   );

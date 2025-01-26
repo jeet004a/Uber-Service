@@ -51,15 +51,18 @@ const initializeSocket = (server) => {
     });
 };
 
-const sendMessageToSocket = (event, message) => {
+const sendMessageToSocketId = (socketId, messageObject) => {
+
+    console.log('xxxxxxx', messageObject);
+
     if (io) {
-        io.emit(event, message);
+        io.to(socketId).emit(messageObject.event, messageObject.data);
     } else {
-        console.error('Socket.io is not initialized');
+        console.log('Socket.io not initialized.');
     }
-};
+}
 
 module.exports = {
     initializeSocket,
-    sendMessageToSocket
+    sendMessageToSocketId
 };

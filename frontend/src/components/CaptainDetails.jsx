@@ -1,12 +1,12 @@
 import React from 'react';
 
-const CaptainDetails = () => {
+const CaptainDetails = (props) => {
   return (
     <div>
       <div className='flex justify-between items-center'>
           <div className='flex justify-start items-center gap-3'>
             <img className='h-10 w-10 rounded-full object-cover' src="https://preview.redd.it/created-random-people-using-chatgpt-midjourney-do-you-know-v0-q1aa450i5dqb1.png?width=1024&format=png&auto=webp&s=c4e9abc47d193474a2fa1a7e337d9d9340dce947" alt="" />
-            <h4 className='text-lg font-medium'>Jeet Wasti</h4>
+            <h4 className='text-lg font-medium capitalize'>Jeet</h4>
           </div>
           <div>
             <h4 className='text-xl font-semibold'>$295.20</h4>

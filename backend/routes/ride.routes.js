@@ -5,6 +5,7 @@ const { body, query } = require("express-validator")
 const userAuth = require('../middlewares/auth.middleware')
 
 
+
 router.post('/create',
     // body('userId').isString().isLength({ min: 24, max: 24 }).withMessage('Invalid User ID'),
     body('pickup').isString().isLength({ min: 3 }).withMessage('Invalid Pickup Address'),
@@ -20,6 +21,22 @@ router.get('/get-fare',
     query('destination').isString().isLength({ min: 3 }).withMessage('Invalid Destination Address'),
     userAuth.authUser,
     rideController.getFare
+)
+
+
+router.post('/confirm', userAuth.authCaptain,
+    body('rideId').isMongoId().withMessage('Invalid ride id'), rideController.confirmRide
+)
+
+router.get('/start-ride', userAuth.authCaptain,
+    query('rideId').isMongoId().withMessage('invalid ride id'),
+    query('otp').isString().isLength({ min: 6, max: 6 }).withMessage('invalid OTP'),
+    rideController.startRide
+)
+
+router.post('/end-ride', userAuth.authCaptain,
+    body('rideId').isMongoId().withMessage('invalid ride id'),
+    rideController.endRide
 )
 
 

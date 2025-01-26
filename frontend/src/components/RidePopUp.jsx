@@ -12,7 +12,7 @@ const RidePopUp = (props) => {
         <div className='flex items-center justify-between p-3 bg-yellow-400 rounded-lg mt-4'>
             <div className='flex items-center gap-3'>
                 <img className='h-10 w-10 rounded-full object-cover ' src="https://preview.redd.it/created-random-people-using-chatgpt-midjourney-do-you-know-v0-q1aa450i5dqb1.png?width=1024&format=png&auto=webp&s=c4e9abc47d193474a2fa1a7e337d9d9340dce947" alt="" />
-                <h2 className='text-lg font-medium'>Jeet Wasti</h2>
+                <h2 className='text-lg font-medium'>ABC</h2>
             </div>
             <h5 className='text-lg font-semibold'>2.2 Km</h5>
         </div>
@@ -23,20 +23,20 @@ const RidePopUp = (props) => {
                 <i className="ri-map-pin-user-line"></i>
                 <div>
                     <h3 className='text-lg font-medium'>194/2 G.T.Road</h3>
-                    <p className='text-sm -mt-1 text-gray-600'>Rajabagan Baidyabati, Hooghly</p>
+                    <p className='text-sm -mt-1 text-gray-600'>{props.ride?.pickup}</p>
                 </div>
                 </div>
                 <div className='flex items-center gap-5 p-3 border-b-2'>
                 <i className="ri-map-pin-2-fill"></i>
                 <div>
                     <h3 className='text-lg font-medium'>194/2 G.T.Road</h3>
-                    <p className='text-sm -mt-1 text-gray-600'>Rajabagan Baidyabati, Hooghly</p>
+                    <p className='text-sm -mt-1 text-gray-600'>{props.ride?.destination}</p>
                 </div>
                 </div>
                 <div className='flex items-center gap-5 p-3 '>
                 <i className="ri-cash-line"></i>
                 <div>
-                    <h3 className='text-lg font-medium'>₹118.20</h3>
+                    <h3 className='text-lg font-medium'>₹{props.ride?.fare}</h3>
                     <p className='text-sm -mt-1 text-gray-600'>Cash Cash</p>
                 </div>
                 </div>
@@ -49,6 +49,7 @@ const RidePopUp = (props) => {
              <button onClick={()=>{
                 props.setRidePopUpPanel(false)
                 props.setConfirmRidePopUpPanel(true)
+                props.confirmRide()
             }} className='mt-1 bg-green-600 text-white font-semibold p-3 px-10 rounded-lg '>Accept</button>
 
             
