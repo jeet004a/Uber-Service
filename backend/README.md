@@ -599,3 +599,365 @@ GET /ride/get-fare?pickup=123+Main+St&destination=456+Elm+St
       "message": "Unable to get fare"
     }
     ```
+    # Uber Ride Confirmation Endpoint
+
+    ## Endpoint
+    `POST /ride/confirm`
+
+    ## Description
+    This endpoint is used by the captain to confirm a ride. It requires the ride ID.
+
+    ## Request Body
+    The request body should be a JSON object containing the following field:
+    - `rideId` (string, required): The ID of the ride. Must be a valid MongoDB ObjectId.
+
+    Example:
+    ```json
+    {
+      "rideId": "ride_id"
+    }
+    ```
+
+    ## Responses
+
+    ### Success
+    - **Status Code**: `200 OK`
+    - **Response Body**:
+      ```json
+      {
+        "ride": {
+          "_id": "ride_id",
+          "user": "user_id",
+          "captain": "captain_id",
+          "status": "accepted"
+        }
+      }
+      ```
+
+    ### Error
+    - **Status Code**: `400 Bad Request`
+      - **Response Body**:
+        ```json
+        {
+          "errors": [
+            {
+              "msg": "Invalid ride id",
+              "param": "rideId",
+              "location": "body"
+            }
+          ]
+        }
+        ```
+    - **Status Code**: `401 Unauthorized`
+      - **Response Body**:
+        ```json
+        {
+          "message": "Unauthorized"
+        }
+        ```
+    - **Status Code**: `500 Internal Server Error`
+      - **Response Body**:
+        ```json
+        {
+          "message": "Unable to confirm ride"
+        }
+        ```
+
+    # Uber Ride Start Endpoint
+
+    ## Endpoint
+    `GET /ride/start-ride`
+
+    ## Description
+    This endpoint is used by the captain to start a ride. It requires the ride ID and OTP.
+
+    ## Request Query Parameters
+    - `rideId` (string, required): The ID of the ride. Must be a valid MongoDB ObjectId.
+    - `otp` (string, required): The OTP for the ride. Must be exactly 6 characters long.
+
+    Example:
+    ```
+    GET /ride/start-ride?rideId=ride_id&otp=123456
+    ```
+
+    ## Responses
+
+    ### Success
+    - **Status Code**: `200 OK`
+    - **Response Body**:
+      ```json
+      {
+        "ride": {
+          "_id": "ride_id",
+          "user": "user_id",
+          "captain": "captain_id",
+          "status": "ongoing"
+        }
+      }
+      ```
+
+    ### Error
+    - **Status Code**: `400 Bad Request`
+      - **Response Body**:
+        ```json
+        {
+          "errors": [
+            {
+              "msg": "Invalid ride id",
+              "param": "rideId",
+              "location": "query"
+            },
+            {
+              "msg": "Invalid OTP",
+              "param": "otp",
+              "location": "query"
+            }
+          ]
+        }
+        ```
+    - **Status Code**: `401 Unauthorized`
+      - **Response Body**:
+        ```json
+        {
+          "message": "Unauthorized"
+        }
+        ```
+    - **Status Code**: `500 Internal Server Error`
+      - **Response Body**:
+        ```json
+        {
+          "message": "Unable to start ride"
+        }
+        ```
+
+    # Uber Ride End Endpoint
+
+    ## Endpoint
+    `POST /ride/end-ride`
+
+    ## Description
+    This endpoint is used by the captain to end a ride. It requires the ride ID.
+
+    ## Request Body
+    The request body should be a JSON object containing the following field:
+    - `rideId` (string, required): The ID of the ride. Must be a valid MongoDB ObjectId.
+
+    Example:
+    ```json
+    {
+      "rideId": "ride_id"
+    }
+    ```
+
+    ## Responses
+
+    ### Success
+    - **Status Code**: `200 OK`
+    - **Response Body**:
+      ```json
+      {
+        "ride": {
+          "_id": "ride_id",
+          "user": "user_id",
+          "captain": "captain_id",
+          "status": "completed"
+        }
+      }
+      ```
+
+    ### Error
+    - **Status Code**: `400 Bad Request`
+      - **Response Body**:
+        ```json
+        {
+          "errors": [
+            {
+              "msg": "Invalid ride id",
+              "param": "rideId",
+              "location": "body"
+            }
+          ]
+        }
+        ```
+    - **Status Code**: `401 Unauthorized`
+      - **Response Body**:
+        ```json
+        {
+          "message": "Unauthorized"
+        }
+        ```
+    - **Status Code**: `500 Internal Server Error`
+      - **Response Body**:
+        ```json
+        {
+          "message": "Unable to end ride"
+        }
+        ```
+
+        # Uber Map Coordinates Endpoint
+
+        ## Endpoint
+        `GET /map/get-coordinates`
+
+        ## Description
+        This endpoint is used to get the coordinates (latitude and longitude) of a given address.
+
+        ## Request Query Parameters
+        - `address` (string, required): The address to get coordinates for. Must be at least 3 characters long.
+
+        Example:
+        ```
+        GET /map/get-coordinates?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA
+        ```
+
+        ## Responses
+
+        ### Success
+        - **Status Code**: `200 OK`
+        - **Response Body**:
+          ```json
+          {
+            "ltd": 37.4224764,
+            "lng": -122.0842499
+          }
+          ```
+
+        ### Error
+        - **Status Code**: `400 Bad Request`
+          - **Response Body**:
+            ```json
+            {
+              "errors": [
+                {
+                  "msg": "Invalid address",
+                  "param": "address",
+                  "location": "query"
+                }
+              ]
+            }
+            ```
+        - **Status Code**: `500 Internal Server Error`
+          - **Response Body**:
+            ```json
+            {
+              "message": "Unable to fetch coordinates"
+            }
+            ```
+
+        # Uber Map Distance and Time Endpoint
+
+        ## Endpoint
+        `GET /map/get-distance-time`
+
+        ## Description
+        This endpoint is used to get the distance and estimated travel time between two locations.
+
+        ## Request Query Parameters
+        - `origin` (string, required): The starting location. Must be at least 3 characters long.
+        - `destination` (string, required): The destination location. Must be at least 3 characters long.
+
+        Example:
+        ```
+        GET /map/get-distance-time?origin=1600+Amphitheatre+Parkway,+Mountain+View,+CA&destination=1+Infinite+Loop,+Cupertino,+CA
+        ```
+
+        ## Responses
+
+        ### Success
+        - **Status Code**: `200 OK`
+        - **Response Body**:
+          ```json
+          {
+            "distance": {
+              "text": "14.4 km",
+              "value": 14400
+            },
+            "duration": {
+              "text": "15 mins",
+              "value": 900
+            }
+          }
+          ```
+
+        ### Error
+        - **Status Code**: `400 Bad Request`
+          - **Response Body**:
+            ```json
+            {
+              "errors": [
+                {
+                  "msg": "Invalid origin",
+                  "param": "origin",
+                  "location": "query"
+                },
+                {
+                  "msg": "Invalid destination",
+                  "param": "destination",
+                  "location": "query"
+                }
+              ]
+            }
+            ```
+        - **Status Code**: `500 Internal Server Error`
+          - **Response Body**:
+            ```json
+            {
+              "message": "Unable to fetch distance and time"
+            }
+            ```
+
+        # Uber Map AutoComplete Suggestions Endpoint
+
+        ## Endpoint
+        `GET /map/get-suggestions`
+
+        ## Description
+        This endpoint is used to get autocomplete suggestions for a given input.
+
+        ## Request Query Parameters
+        - `input` (string, required): The input text to get suggestions for. Must be at least 1 character long.
+
+        Example:
+        ```
+        GET /map/get-suggestions?input=1600+Amphitheatre
+        ```
+
+        ## Responses
+
+        ### Success
+        - **Status Code**: `200 OK`
+        - **Response Body**:
+          ```json
+          [
+            {
+              "description": "1600 Amphitheatre Parkway, Mountain View, CA, USA",
+              "place_id": "ChIJ2eUgeAK6j4ARbn5u_wAGqWA"
+            },
+            {
+              "description": "1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA",
+              "place_id": "ChIJ2eUgeAK6j4ARbn5u_wAGqWA"
+            }
+          ]
+          ```
+
+        ### Error
+        - **Status Code**: `400 Bad Request`
+          - **Response Body**:
+            ```json
+            {
+              "errors": [
+                {
+                  "msg": "Invalid input",
+                  "param": "input",
+                  "location": "query"
+                }
+              ]
+            }
+            ```
+        - **Status Code**: `500 Internal Server Error`
+          - **Response Body**:
+            ```json
+            {
+              "message": "Unable to fetch suggestions"
+            }
+            ```
