@@ -55,10 +55,7 @@ const Home = () => {
   //   })
   // })
 
-  useEffect(()=>{
-  //  console.log(user) 
-  socket.emit("join",{userType: 'user', userId: user._id})
-  })
+
 
   socket.on('ride-confirmed', ride=>{
     // console.log(ride)
@@ -144,39 +141,102 @@ const Home = () => {
     }
   },[waitingForDriver])
 
+  // Below function works search functionality with out debounce for debounce please check under useEffect
+  // const handlePickupChange=async(e)=>{
+  //   setPickup(e.target.value)
+  //   try {
+  //     const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
+  //       params: { input: e.target.value },
+  //       headers: {
+  //           Authorization: `Bearer ${localStorage.getItem('token')}`
+  //       }
 
-  const handlePickupChange=async(e)=>{
-    setPickup(e.target.value)
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
-        params: { input: e.target.value },
+  //   })
+  //     // console.log(response.data)
+  //     setPickupSuggestions(response.data)
+  //   } catch (error) {
+  //     // console.log(error)
+  //   }
+  // }
+
+  useEffect(()=>{
+    //  console.log(user) 
+    if(pickup.trim()===''){
+      setPickupSuggestions([])
+      // setDestinationSuggestions([])
+      return
+    }
+
+    const pickupHandel=setTimeout(async()=>{
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
+        params: { input: pickup },
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         }
 
-    })
-      // console.log(response.data)
-      setPickupSuggestions(response.data)
-    } catch (error) {
-      // console.log(error)
-    }
+        })
+        setPickupSuggestions(response.data)
+    },800)
+
+
+
+    return()=>{
+      clearTimeout(pickupHandel)
+  }
+
+    socket.emit("join",{userType: 'user', userId: user._id})
+    },[pickup],[destination])
+
+
+  const handlePickupChange=(e)=>{
+    e.preventDefault()
+    setPickup(e.target.value)
   }
 
 
-  const handleDestinationChange=async(e)=>{
-    setDestination(e.target.value)
-    try {
+  useEffect(()=>{
+    if(destination.trim()===''){
+      setDestinationSuggestions([])
+      return
+    }
+
+    const destinationHandel=setTimeout(async()=>{
       const response=await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,{
-        params: { input: e.target.value },
+        params: { input: destination },
         headers:{
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       setDestinationSuggestions(response.data)
-    } catch (error) {
-      // console.log(error)
-    }
+  },800)
+
+
+    return()=>{
+      clearTimeout(destinationHandel)
   }
+    },[destination])
+
+
+  const handleDestinationChange=(e)=>{
+    e.preventDefault()
+    setDestination(e.target.value)
+  }
+  
+// Below function works search functionality with out debounce for debounce please check under useEffect
+  // const handleDestinationChange=async(e)=>{
+  //   setDestination(e.target.value)
+  //   try {
+  //     const response=await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,{
+  //       params: { input: e.target.value },
+  //       headers:{
+  //         Authorization: `Bearer ${localStorage.getItem('token')}`
+  //       }
+  //     })
+  //     setDestinationSuggestions(response.data)
+  //   } catch (error) {
+  //     // console.log(error)
+  //   }
+  // }
 
 
 
